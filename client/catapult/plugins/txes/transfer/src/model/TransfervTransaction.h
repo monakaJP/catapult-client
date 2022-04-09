@@ -20,7 +20,7 @@
 **/
 
 #pragma once
-#include "TransfervEntityType.h"
+#include "TransferEntityType.h"
 #include "catapult/model/Mosaic.h"
 #include "catapult/model/Transaction.h"
 

@@ -1,7 +1,7 @@
 import "transaction.cats"
 
 # Test PluginTransaction(copy of transfer)
-# Shared content between TsansfervTransaction and EmbeddedTsansfervTransaction.
+# Shared content between TransfervTransaction and EmbeddedTsansfervTransaction.
 inline struct TsansfervTransactionBody
 	# recipient address
 	recipient_address = UnresolvedAddress
