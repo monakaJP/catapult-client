@@ -27,7 +27,7 @@
     "yargs": "^17.4.0"
   },
   "dependencies": {
-    "bitcore-mnemonic": "^8.25.25",
+    "bitcore-mnemonic": "^8.25.30",
     "js-sha3": "^0.8.0",
     "request": "^2.88.2",
     "ripemd160": "^2.0.2",
