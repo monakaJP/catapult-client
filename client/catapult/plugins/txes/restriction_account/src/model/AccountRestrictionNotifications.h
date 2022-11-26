@@ -54,6 +54,9 @@ namespace catapult { namespace model {
 	/// Account operation restriction modifications.
 	DEFINE_ACCOUNT_RESTRICTION_NOTIFICATION(Operation_Modifications, 0x0007, Validator);
 
+	/// Account deacticcate operations.
+	DEFINE_ACCOUNT_RESTRICTION_NOTIFICATION(Deactivate_Modifications, 0x0008, Validator);
+
 #undef DEFINE_ACCOUNT_RESTRICTION_NOTIFICATION
 
 	// endregion

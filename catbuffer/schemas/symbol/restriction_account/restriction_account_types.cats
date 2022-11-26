@@ -12,6 +12,9 @@ enum AccountRestrictionFlags : uint16
 	# Restriction type is a transaction type.
 	TRANSACTION_TYPE = 0x0004
 
+	# Deactivate
+	ACCOUNT_DEACTIVATE = 0x0010
+
 	# Restriction is interpreted as outgoing.
 	OUTGOING = 0x4000
 

@@ -70,6 +70,9 @@ namespace catapult { namespace validators {
 	/// Validation failed because the operation type is not allowed to be initiated by the signer.
 	DEFINE_RESTRICTION_ACCOUNT_RESULT(Operation_Type_Prohibited, 13);
 
+	/// Validation failed beause the account was deactivated
+	DEFINE_RESTRICTION_ACCOUNT_RESULT(Account_Deactivated, 14);
+
 #ifndef CUSTOM_RESULT_DEFINITION
 }}
 #endif

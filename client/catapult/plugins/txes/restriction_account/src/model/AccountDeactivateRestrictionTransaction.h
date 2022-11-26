@@ -20,25 +20,14 @@
 **/
 
 #pragma once
-#ifndef CUSTOM_ENTITY_TYPE_DEFINITION
-#include "catapult/model/EntityType.h"
+#include "AccountRestrictionSharedTransaction.h"
 
 namespace catapult { namespace model {
 
-#endif
+#pragma pack(push, 1)
 
-	/// Address account restriction transaction.
-	DEFINE_TRANSACTION_TYPE(RestrictionAccount, Account_Address_Restriction, 0x1);
+	/// Binary layout for an account operation restriction transaction body.
+	DEFINE_ACCOUNT_DEACTIVATE_TRANSACTION(Operation, Operation, EntityType)
 
-	/// Mosaic account restriction transaction.
-	DEFINE_TRANSACTION_TYPE(RestrictionAccount, Account_Mosaic_Restriction, 0x2);
-
-	/// Operation account restriction transaction.
-	DEFINE_TRANSACTION_TYPE(RestrictionAccount, Account_Operation_Restriction, 0x3);
-
-	/// Operation account restriction transaction.
-	DEFINE_TRANSACTION_TYPE(RestrictionAccount, Account_Deactivate_Restriction, 0x4);
-
-#ifndef CUSTOM_ENTITY_TYPE_DEFINITION
+#pragma pack(pop)
 }}
-#endif

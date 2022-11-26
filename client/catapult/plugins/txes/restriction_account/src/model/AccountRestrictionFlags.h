@@ -39,6 +39,9 @@ namespace catapult { namespace model {
 		/// Restriction type sentinel.
 		Sentinel = 0x0008,
 
+		/// Restriction type Deactivate.
+		Deactivate = 0x0010,
+
 		/// Restriction is interpreted as outgoing.
 		Outgoing = 0x4000,
 

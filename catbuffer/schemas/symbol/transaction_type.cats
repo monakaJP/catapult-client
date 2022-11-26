@@ -66,6 +66,9 @@ enum TransactionType : uint16
 	# AccountOperationRestrictionTransaction
 	ACCOUNT_OPERATION_RESTRICTION = 0x4350
 
+	# AccountDeactivateTransaction
+	ACCOUNT_DEACTIVATE = 0x4450
+
 	# MosaicAddressRestrictionTransaction
 	MOSAIC_ADDRESS_RESTRICTION = 0x4251
 

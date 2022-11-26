@@ -81,4 +81,6 @@ namespace catapult { namespace validators {
 	/// Validator that applies to account transaction restriction notifications and validates that:
 	/// - account operation restriction transactions are not blocked
 	DECLARE_STATEFUL_VALIDATOR(AccountOperationRestrictionNoSelfBlocking, model::ModifyAccountOperationRestrictionValueNotification)();
+
+	DECLARE_STATEFUL_VALIDATOR(AccountDeactivate, model::ModifyAccountOperationRestrictionValueNotification)();
 }}

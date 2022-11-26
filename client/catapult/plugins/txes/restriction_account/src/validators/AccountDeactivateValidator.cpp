@@ -19,26 +19,23 @@
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#pragma once
-#ifndef CUSTOM_ENTITY_TYPE_DEFINITION
-#include "catapult/model/EntityType.h"
+#include "Validators.h"
+#include "AccountRestrictionView.h"
+#include "src/cache/AccountRestrictionCache.h"
+#include "catapult/model/Address.h"
+#include "catapult/validators/ValidatorContext.h"
 
-namespace catapult { namespace model {
+namespace catapult { namespace validators {
 
-#endif
+	using Notification = model::TransactionNotification;
 
-	/// Address account restriction transaction.
-	DEFINE_TRANSACTION_TYPE(RestrictionAccount, Account_Address_Restriction, 0x1);
+	DEFINE_STATEFUL_VALIDATOR(OperationRestriction, [](const Notification& notification, const ValidatorContext& context) {
+		constexpr auto Restriction_Flags = model::AccountRestrictionFlags::Deactivate;
+		AccountRestrictionView view(context.Cache);
+		// if (!view.initialize(notification.Sender))
+		// 	return ValidationResult::Success;
 
-	/// Mosaic account restriction transaction.
-	DEFINE_TRANSACTION_TYPE(RestrictionAccount, Account_Mosaic_Restriction, 0x2);
-
-	/// Operation account restriction transaction.
-	DEFINE_TRANSACTION_TYPE(RestrictionAccount, Account_Operation_Restriction, 0x3);
-
-	/// Operation account restriction transaction.
-	DEFINE_TRANSACTION_TYPE(RestrictionAccount, Account_Deactivate_Restriction, 0x4);
-
-#ifndef CUSTOM_ENTITY_TYPE_DEFINITION
+		auto isAccountDeactivated = view.isAllowed(Restriction_Flags, notification.Deactivate);
+		return isAccountDeactivated ? Failure_RestrictionAccount_Account_Deactivated : ValidationResult::Success;
+	})
 }}
-#endif
