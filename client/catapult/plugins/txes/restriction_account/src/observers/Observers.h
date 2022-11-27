@@ -36,4 +36,7 @@ namespace catapult { namespace observers {
 	/// Observes changes triggered by account operation restriction value modification notifications and:
 	/// - adds / deletes account operation restriction value to / from cache
 	DECLARE_OBSERVER(AccountOperationRestrictionValueModification, model::ModifyAccountOperationRestrictionValueNotification)();
+
+	// DECLARE_OBSERVER(AccountDeactiveRestrictionValueModification, model::ModifyAccountDeactiveRestrictionValueNotification)();
+
 }}

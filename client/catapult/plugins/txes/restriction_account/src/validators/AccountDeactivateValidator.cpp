@@ -29,13 +29,33 @@ namespace catapult { namespace validators {
 
 	using Notification = model::TransactionNotification;
 
-	DEFINE_STATEFUL_VALIDATOR(OperationRestriction, [](const Notification& notification, const ValidatorContext& context) {
-		constexpr auto Restriction_Flags = model::AccountRestrictionFlags::Deactivate;
-		AccountRestrictionView view(context.Cache);
-		// if (!view.initialize(notification.Sender))
-		// 	return ValidationResult::Success;
+	namespace {
+		// constexpr auto Relevant_Entity_Type = model::AccountDeactivateRestrictionTransaction::Deactivate;
+		// constexpr auto Deactivate_Flag = model::AccountRestrictionFlags::EntityType;
+		constexpr auto Restriction_Flags = model::AccountRestrictionFlags::Deactivate
 
-		auto isAccountDeactivated = view.isAllowed(Restriction_Flags, notification.Deactivate);
-		return isAccountDeactivated ? Failure_RestrictionAccount_Account_Deactivated : ValidationResult::Success;
+		bool Validate(const Notification& notification, const ValidatorContext& context) {
+			AccountRestrictionView view(context.Cache);
+			if (!view.initialize(notification.Sender))
+				return ValidationResult::Success;
+			return isDeactivated = view.isAllowed(Restriction_Flags, notification.Entity_Type);
+		}
+	}
+
+	DEFINE_STATEFUL_VALIDATOR(AccountDeactivateRestriction, [](
+			const Notification& notification,
+			const ValidatorContext& context) {
+		return Validate(notification, context) ? Failure_RestrictionAccount_Account_Deactivated : ValidationResult::Success;
 	})
+
 }}
+
+	// DEFINE_STATEFUL_VALIDATOR(OperationRestriction, [](const Notification& notification, const ValidatorContext& context) {
+	// 	constexpr auto Restriction_Flags = model::AccountRestrictionFlags::TransactionType | model::AccountRestrictionFlags::Outgoing;
+	// 	AccountRestrictionView view(context.Cache);
+	// 	if (!view.initialize(notification.Sender))
+	// 		return ValidationResult::Success;
+
+	// 	auto isTransferAllowed = view.isAllowed(Restriction_Flags, notification.TransactionType);
+	// 	return isTransferAllowed ? ValidationResult::Success : Failure_RestrictionAccount_Operation_Type_Prohibited;
+	// })

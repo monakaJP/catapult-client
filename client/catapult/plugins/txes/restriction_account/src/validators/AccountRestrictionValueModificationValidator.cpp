@@ -83,4 +83,8 @@ namespace catapult { namespace validators {
 			AccountOperationRestrictionValueModification,
 			model::ModifyAccountOperationRestrictionValueNotification,
 			model::EntityType)
+	// DEFINE_ACCOUNT_RESTRICTION_MODIFICATION_VALIDATOR(
+	// 		AccountDeactiveRestrictionValueModification,
+	// 		model::ModifyAccountDeactiveRestrictionValueNotification,
+	// 		model::EntityType)
 }}

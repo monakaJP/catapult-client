@@ -27,7 +27,7 @@ namespace catapult { namespace model {
 #pragma pack(push, 1)
 
 	/// Binary layout for an account operation restriction transaction body.
-	DEFINE_ACCOUNT_DEACTIVATE_TRANSACTION(Operation, Operation, EntityType)
+	DEFINE_ACCOUNT_RESTRICTION_TRANSACTION(Deactivate, Deactivate, EntityType)
 
 #pragma pack(pop)
 }}
