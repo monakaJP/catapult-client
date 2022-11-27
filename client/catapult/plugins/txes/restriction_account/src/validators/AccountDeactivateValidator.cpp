@@ -29,23 +29,30 @@ namespace catapult { namespace validators {
 
 	using Notification = model::TransactionNotification;
 
-	namespace {
-		// constexpr auto Relevant_Entity_Type = model::AccountDeactivateRestrictionTransaction::Deactivate;
-		// constexpr auto Deactivate_Flag = model::AccountRestrictionFlags::EntityType;
-		constexpr auto Restriction_Flags = model::AccountRestrictionFlags::Deactivate
+	// namespace {
+	// 	// constexpr auto Relevant_Entity_Type = model::AccountDeactivateRestrictionTransaction::Deactivate;
+	// 	// constexpr auto Deactivate_Flag = model::AccountRestrictionFlags::EntityType;
+	// 	constexpr auto Restriction_Flags = model::AccountRestrictionFlags::Deactivate
 
-		bool Validate(const Notification& notification, const ValidatorContext& context) {
-			AccountRestrictionView view(context.Cache);
-			if (!view.initialize(notification.Sender))
-				return ValidationResult::Success;
-			return isDeactivated = view.isAllowed(Restriction_Flags, notification.Entity_Type);
-		}
-	}
-
-	DEFINE_STATEFUL_VALIDATOR(AccountDeactivateRestriction, [](
-			const Notification& notification,
-			const ValidatorContext& context) {
-		return Validate(notification, context) ? Failure_RestrictionAccount_Account_Deactivated : ValidationResult::Success;
+	// 	bool Validate(const Notification& notification, const ValidatorContext& context) {
+	// 		AccountRestrictionView view(context.Cache);
+	// 		if (!view.initialize(notification.Sender))
+	// 			return ValidationResult::Success;
+	// 		return view.isAllowed(Restriction_Flags, notification.Entity_Type);
+	// 	}
+	// }
+	// AccountDeactivateRestriction?
+	DEFINE_STATEFUL_VALIDATOR(DeactivateRestriction, [](const Notification& notification,const ValidatorContext& context) {
+		constexpr auto Restriction_Flags = model::AccountRestrictionFlags::Deactivate;
+		AccountRestrictionView view(context.Cache);
+		if (!view.initialize(notification.Sender))
+			return ValidationResult::Success;
+		
+		// auto isDeactivated = view.get(Restriction_Flags);
+		auto isDeactivated = HasFlag(Restriction_Flags, view.get(Restriction_Flags).descriptor().raw());
+		// get sender flags
+		return isDeactivated ? Failure_RestrictionAccount_Account_Deactivated : ValidationResult::Success;
+		// return Validate(notification, context) ? 
 	})
 
 }}
