@@ -31,6 +31,7 @@ namespace catapult { namespace state {
 		addRestriction(model::AccountRestrictionFlags::MosaicId, sizeof(MosaicId));
 		addRestriction(model::AccountRestrictionFlags::Address | Outgoing, Address::Size);
 		addRestriction(model::AccountRestrictionFlags::TransactionType | Outgoing, sizeof(model::EntityType));
+		addRestriction(model::AccountRestrictionFlags::Deactivate , sizeof(model::EntityType));
 	}
 
 	const Address& AccountRestrictions::address() const {

@@ -58,6 +58,8 @@ namespace catapult { namespace validators {
 			using OperationType = state::AccountRestrictionOperationType;
 			auto isAllowAndForbidden = OperationType::Allow == operationType && !restriction.canAllow(modification);
 			auto isBlockAndForbidden = OperationType::Block == operationType && !restriction.canBlock(modification);
+			if (isAllowAndForbidden || isBlockAndForbidden)
+				CATAPULT_LOG(info) << "Failure_RestrictionAccount_Invalid_Modification(valueModification)";
 			return isAllowAndForbidden || isBlockAndForbidden
 					? Failure_RestrictionAccount_Invalid_Modification
 					: ValidationResult::Success;

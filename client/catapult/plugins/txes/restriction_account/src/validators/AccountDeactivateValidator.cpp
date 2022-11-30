@@ -29,40 +29,35 @@ namespace catapult { namespace validators {
 
 	using Notification = model::TransactionNotification;
 
-	// namespace {
-	// 	// constexpr auto Relevant_Entity_Type = model::AccountDeactivateRestrictionTransaction::Deactivate;
-	// 	// constexpr auto Deactivate_Flag = model::AccountRestrictionFlags::EntityType;
-	// 	constexpr auto Restriction_Flags = model::AccountRestrictionFlags::Deactivate
-
-	// 	bool Validate(const Notification& notification, const ValidatorContext& context) {
-	// 		AccountRestrictionView view(context.Cache);
-	// 		if (!view.initialize(notification.Sender))
-	// 			return ValidationResult::Success;
-	// 		return view.isAllowed(Restriction_Flags, notification.Entity_Type);
-	// 	}
-	// }
-	// AccountDeactivateRestriction?
-	DEFINE_STATEFUL_VALIDATOR(DeactivateRestriction, [](const Notification& notification,const ValidatorContext& context) {
+	// auto strippedRestrictionFlags = state::AccountRestrictionDescriptor(restrictionFlags).restrictionFlags();
+	DEFINE_STATEFUL_VALIDATOR(AccountDeactivate, [](const Notification& notification,const ValidatorContext& context) {
 		constexpr auto Restriction_Flags = model::AccountRestrictionFlags::Deactivate;
+		// auto strippedRestrictionFlags = state::AccountRestrictionDescriptor(Restriction_Flags).restrictionFlags();
 		AccountRestrictionView view(context.Cache);
+		CATAPULT_LOG(info) << "Deactivate validation....";
+		// const auto& address = notification.Sender;
+		// const auto& cache = context.Cache.sub<cache::AccountRestrictionCache>();
+		// if (!cache.contains(address))
+		// 	return ValidationResult::Success;
+
+		// auto restrictionsIter = cache.find(address);
+		// const auto& restrictions = restrictionsIter.get();
+		// auto restrictionFlags = notification.AccountRestrictionDescriptor.directionalRestrictionFlags();
+		// const auto& restriction = restrictions.restriction(Restriction_Flags);
+		// auto strippedRestrictionFlags = state::AccountRestrictionDescriptor(restrictionFlags).restrictionFlags();
 		if (!view.initialize(notification.Sender))
 			return ValidationResult::Success;
-		
-		// auto isDeactivated = view.get(Restriction_Flags);
-		auto isDeactivated = HasFlag(Restriction_Flags, view.get(Restriction_Flags).descriptor().raw());
+		// auto isTransferAllowed = view.isAllowed(Restriction_Flags, notification.TransactionType);
+		auto isDeactivated = HasFlag(model::AccountRestrictionFlags::Deactivate, view.get(Restriction_Flags).descriptor().raw());
+		// auto isDeactivated = restriction.contains(Restriction_Flags);
+		// auto isDeactivated = strippedRestrictionFlags == state::AccountRestrictions:Deactivate
 		// get sender flags
+		if (!isDeactivated)
+			CATAPULT_LOG(info) << "validation success";
+		if (isDeactivated)
+			CATAPULT_LOG(info) << "DeactivatedAddress....";
 		return isDeactivated ? Failure_RestrictionAccount_Account_Deactivated : ValidationResult::Success;
-		// return Validate(notification, context) ? 
 	})
 
 }}
 
-	// DEFINE_STATEFUL_VALIDATOR(OperationRestriction, [](const Notification& notification, const ValidatorContext& context) {
-	// 	constexpr auto Restriction_Flags = model::AccountRestrictionFlags::TransactionType | model::AccountRestrictionFlags::Outgoing;
-	// 	AccountRestrictionView view(context.Cache);
-	// 	if (!view.initialize(notification.Sender))
-	// 		return ValidationResult::Success;
-
-	// 	auto isTransferAllowed = view.isAllowed(Restriction_Flags, notification.TransactionType);
-	// 	return isTransferAllowed ? ValidationResult::Success : Failure_RestrictionAccount_Operation_Type_Prohibited;
-	// })

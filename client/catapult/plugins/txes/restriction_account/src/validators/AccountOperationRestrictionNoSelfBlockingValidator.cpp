@@ -23,6 +23,7 @@
 #include "AccountRestrictionView.h"
 #include "src/cache/AccountRestrictionCache.h"
 #include "src/model/AccountOperationRestrictionTransaction.h"
+#include "src/model/AccountDeactivateRestrictionTransaction.h"
 #include "catapult/model/Address.h"
 #include "catapult/validators/ValidatorContext.h"
 
@@ -32,11 +33,13 @@ namespace catapult { namespace validators {
 
 	namespace {
 		constexpr auto Relevant_Entity_Type = model::AccountOperationRestrictionTransaction::Entity_Type;
-		constexpr auto Restriction_Flags = model::AccountRestrictionFlags::TransactionType | model::AccountRestrictionFlags::Outgoing;
+		constexpr auto Relevant_Entity_Type_Deactivate = model::AccountDeactivateRestrictionTransaction::Entity_Type;
+		constexpr auto Restriction_Flags = model::AccountRestrictionFlags::TransactionType | model::AccountRestrictionFlags::Outgoing | model::AccountRestrictionFlags::Deactivate;
 
 		bool Validate(const Notification& notification, const ValidatorContext& context) {
 			AccountRestrictionView view(context.Cache);
 			auto isRelevantEntityType = Relevant_Entity_Type == notification.RestrictionValue;
+			auto isRelevantEntityTypeDeactivate = Relevant_Entity_Type_Deactivate == notification.RestrictionValue;
 			auto isAllow = state::AccountRestrictionOperationType::Allow == notification.AccountRestrictionDescriptor.operationType();
 
 			// cannot delete relevant entity type for operation type Allow
@@ -52,8 +55,13 @@ namespace catapult { namespace validators {
 			// adding a value to an account restrictions should only be allowed when
 			// - operation type Allow: if it is the relevant entity type or the relevant entity type is already contained
 			// - operation type Block: if it is not the relevant entity type
-			auto isAllowAndForbidden = isAllow && !isRelevantEntityType && 0 == numRestrictionValues;
+			// isAllowAndForbidden... isAllow==true, isRelevantEntityType==false, numRestrictionValues==0
+			auto isAllowAndForbidden = isAllow && !isRelevantEntityType && isRelevantEntityTypeDeactivate && 0 == numRestrictionValues;
 			auto isBlockAndForbidden = !isAllow && isRelevantEntityType;
+			if (isAllowAndForbidden)
+				CATAPULT_LOG(info) << "Failure_RestrictionAccount_Invalid_Modification(noSelfBlocking, isAllowAndForbidden)";
+			if (isBlockAndForbidden)
+				CATAPULT_LOG(info) << "Failure_RestrictionAccount_Invalid_Modification(noSelfBlocking, isBlockAndForbidden)";
 			return !(isAllowAndForbidden || isBlockAndForbidden);
 		}
 	}

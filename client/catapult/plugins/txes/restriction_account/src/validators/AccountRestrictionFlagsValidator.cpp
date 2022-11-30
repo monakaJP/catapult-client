@@ -40,6 +40,9 @@ namespace catapult { namespace validators {
 			case model::AccountRestrictionFlags::TransactionType:
 				return HasFlag(model::AccountRestrictionFlags::Outgoing, directionalRestrictionFlags);
 
+			case model::AccountRestrictionFlags::Deactivate:
+				return true;
+
 			default:
 				return false;
 			}
@@ -47,6 +50,7 @@ namespace catapult { namespace validators {
 	}
 
 	DEFINE_STATELESS_VALIDATOR(AccountRestrictionFlags, [](const Notification& notification) {
+		// CATAPULT_LOG(info) << "Flag validation....";
 		return IsValidAccountRestrictionFlags(notification.RestrictionFlags)
 				? ValidationResult::Success
 				: Failure_RestrictionAccount_Invalid_Restriction_Flags;

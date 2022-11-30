@@ -80,7 +80,8 @@ namespace catapult { namespace plugins {
 				.add(validators::CreateAccountOperationRestrictionValueModificationValidator())
 				.add(validators::CreateMaxAccountOperationRestrictionValuesValidator(maxAccountRestrictionValues))
 				.add(validators::CreateOperationRestrictionValidator())
-				.add(validators::CreateAccountOperationRestrictionNoSelfBlockingValidator());
+				.add(validators::CreateAccountOperationRestrictionNoSelfBlockingValidator())
+				.add(validators::CreateAccountDeactivateValidator());
 		});
 
 		manager.addObserverHook([](auto& builder) {
