@@ -520,6 +520,7 @@ class TransactionType(Enum):
 	ACCOUNT_ADDRESS_RESTRICTION = 16720
 	ACCOUNT_MOSAIC_RESTRICTION = 16976
 	ACCOUNT_OPERATION_RESTRICTION = 17232
+	ACCOUNT_DEACTIVATE = 17488
 	MOSAIC_ADDRESS_RESTRICTION = 16977
 	MOSAIC_GLOBAL_RESTRICTION = 16721
 	TRANSFER = 16724
@@ -12229,6 +12230,7 @@ class AccountRestrictionFlags(Flag):
 	ADDRESS = 1
 	MOSAIC_ID = 2
 	TRANSACTION_TYPE = 4
+	ACCOUNT_DEACTIVATE = 16
 	OUTGOING = 16384
 	BLOCK = 32768
 
@@ -13408,6 +13410,406 @@ class EmbeddedAccountOperationRestrictionTransactionV1:
 		buffer = buffer[ArrayHelpers.size(restriction_deletions):]
 
 		instance = EmbeddedAccountOperationRestrictionTransactionV1()
+		instance._signer_public_key = signer_public_key
+		instance._version = version
+		instance._network = network
+		instance._type_ = type_
+		instance._restriction_flags = restriction_flags
+		instance._restriction_additions = restriction_additions
+		instance._restriction_deletions = restriction_deletions
+		return instance
+
+	def serialize(self) -> bytes:
+		buffer = bytes()
+		buffer += self.size.to_bytes(4, byteorder='little', signed=False)
+		buffer += self._embedded_transaction_header_reserved_1.to_bytes(4, byteorder='little', signed=False)
+		buffer += self._signer_public_key.serialize()
+		buffer += self._entity_body_reserved_1.to_bytes(4, byteorder='little', signed=False)
+		buffer += self._version.to_bytes(1, byteorder='little', signed=False)
+		buffer += self._network.serialize()
+		buffer += self._type_.serialize()
+		buffer += self._restriction_flags.serialize()
+		buffer += len(self._restriction_additions).to_bytes(1, byteorder='little', signed=False)  # restriction_additions_count
+		buffer += len(self._restriction_deletions).to_bytes(1, byteorder='little', signed=False)  # restriction_deletions_count
+		buffer += self._account_restriction_transaction_body_reserved_1.to_bytes(4, byteorder='little', signed=False)
+		buffer += ArrayHelpers.write_array(self._restriction_additions)
+		buffer += ArrayHelpers.write_array(self._restriction_deletions)
+		return buffer
+
+	def __str__(self) -> str:
+		result = '('
+		result += f'signer_public_key: {self._signer_public_key.__str__()}, '
+		result += f'version: 0x{self._version:X}, '
+		result += f'network: {self._network.__str__()}, '
+		result += f'type_: {self._type_.__str__()}, '
+		result += f'restriction_flags: {self._restriction_flags.__str__()}, '
+		result += f'restriction_additions: {list(map(str, self._restriction_additions))}, '
+		result += f'restriction_deletions: {list(map(str, self._restriction_deletions))}, '
+		result += ')'
+		return result
+
+
+class AccountDeactivateTransactionV1:
+	TRANSACTION_VERSION: int = 1
+	TRANSACTION_TYPE: TransactionType = TransactionType.ACCOUNT_DEACTIVATE
+	TYPE_HINTS = {
+		'signature': 'pod:Signature',
+		'signer_public_key': 'pod:PublicKey',
+		'network': 'enum:NetworkType',
+		'type_': 'enum:TransactionType',
+		'fee': 'pod:Amount',
+		'deadline': 'pod:Timestamp',
+		'restriction_flags': 'enum:AccountRestrictionFlags',
+		'restriction_additions': 'array[TransactionType]',
+		'restriction_deletions': 'array[TransactionType]'
+	}
+
+	def __init__(self):
+		self._signature = Signature()
+		self._signer_public_key = PublicKey()
+		self._version = AccountDeactivateTransactionV1.TRANSACTION_VERSION
+		self._network = NetworkType.MAINNET
+		self._type_ = AccountDeactivateTransactionV1.TRANSACTION_TYPE
+		self._fee = Amount()
+		self._deadline = Timestamp()
+		self._restriction_flags = AccountRestrictionFlags.ADDRESS
+		self._restriction_additions = []
+		self._restriction_deletions = []
+		self._verifiable_entity_header_reserved_1 = 0  # reserved field
+		self._entity_body_reserved_1 = 0  # reserved field
+		self._account_restriction_transaction_body_reserved_1 = 0  # reserved field
+
+	def sort(self) -> None:
+		pass
+
+	@property
+	def signature(self) -> Signature:
+		return self._signature
+
+	@property
+	def signer_public_key(self) -> PublicKey:
+		return self._signer_public_key
+
+	@property
+	def version(self) -> int:
+		return self._version
+
+	@property
+	def network(self) -> NetworkType:
+		return self._network
+
+	@property
+	def type_(self) -> TransactionType:
+		return self._type_
+
+	@property
+	def fee(self) -> Amount:
+		return self._fee
+
+	@property
+	def deadline(self) -> Timestamp:
+		return self._deadline
+
+	@property
+	def restriction_flags(self) -> AccountRestrictionFlags:
+		return self._restriction_flags
+
+	@property
+	def restriction_additions(self) -> List[TransactionType]:
+		return self._restriction_additions
+
+	@property
+	def restriction_deletions(self) -> List[TransactionType]:
+		return self._restriction_deletions
+
+	@signature.setter
+	def signature(self, value: Signature):
+		self._signature = value
+
+	@signer_public_key.setter
+	def signer_public_key(self, value: PublicKey):
+		self._signer_public_key = value
+
+	@version.setter
+	def version(self, value: int):
+		self._version = value
+
+	@network.setter
+	def network(self, value: NetworkType):
+		self._network = value
+
+	@type_.setter
+	def type_(self, value: TransactionType):
+		self._type_ = value
+
+	@fee.setter
+	def fee(self, value: Amount):
+		self._fee = value
+
+	@deadline.setter
+	def deadline(self, value: Timestamp):
+		self._deadline = value
+
+	@restriction_flags.setter
+	def restriction_flags(self, value: AccountRestrictionFlags):
+		self._restriction_flags = value
+
+	@restriction_additions.setter
+	def restriction_additions(self, value: List[TransactionType]):
+		self._restriction_additions = value
+
+	@restriction_deletions.setter
+	def restriction_deletions(self, value: List[TransactionType]):
+		self._restriction_deletions = value
+
+	@property
+	def size(self) -> int:
+		size = 0
+		size += 4
+		size += 4
+		size += self.signature.size
+		size += self.signer_public_key.size
+		size += 4
+		size += 1
+		size += self.network.size
+		size += self.type_.size
+		size += self.fee.size
+		size += self.deadline.size
+		size += self.restriction_flags.size
+		size += 1
+		size += 1
+		size += 4
+		size += ArrayHelpers.size(self.restriction_additions)
+		size += ArrayHelpers.size(self.restriction_deletions)
+		return size
+
+	@classmethod
+	def deserialize(cls, payload: ByteString) -> AccountDeactivateTransactionV1:
+		buffer = memoryview(payload)
+		size_ = int.from_bytes(buffer[:4], byteorder='little', signed=False)
+		buffer = buffer[4:]
+		buffer = buffer[:size_ - 4]
+		del size_
+		verifiable_entity_header_reserved_1 = int.from_bytes(buffer[:4], byteorder='little', signed=False)
+		buffer = buffer[4:]
+		assert verifiable_entity_header_reserved_1 == 0, f'Invalid value of reserved field ({verifiable_entity_header_reserved_1})'
+		signature = Signature.deserialize(buffer)
+		buffer = buffer[signature.size:]
+		signer_public_key = PublicKey.deserialize(buffer)
+		buffer = buffer[signer_public_key.size:]
+		entity_body_reserved_1 = int.from_bytes(buffer[:4], byteorder='little', signed=False)
+		buffer = buffer[4:]
+		assert entity_body_reserved_1 == 0, f'Invalid value of reserved field ({entity_body_reserved_1})'
+		version = int.from_bytes(buffer[:1], byteorder='little', signed=False)
+		buffer = buffer[1:]
+		network = NetworkType.deserialize(buffer)
+		buffer = buffer[network.size:]
+		type_ = TransactionType.deserialize(buffer)
+		buffer = buffer[type_.size:]
+		fee = Amount.deserialize(buffer)
+		buffer = buffer[fee.size:]
+		deadline = Timestamp.deserialize(buffer)
+		buffer = buffer[deadline.size:]
+		restriction_flags = AccountRestrictionFlags.deserialize(buffer)
+		buffer = buffer[restriction_flags.size:]
+		restriction_additions_count = int.from_bytes(buffer[:1], byteorder='little', signed=False)
+		buffer = buffer[1:]
+		restriction_deletions_count = int.from_bytes(buffer[:1], byteorder='little', signed=False)
+		buffer = buffer[1:]
+		account_restriction_transaction_body_reserved_1 = int.from_bytes(buffer[:4], byteorder='little', signed=False)
+		buffer = buffer[4:]
+		assert account_restriction_transaction_body_reserved_1 == 0, f'Invalid value of reserved field ({account_restriction_transaction_body_reserved_1})'
+		restriction_additions = ArrayHelpers.read_array_count(buffer, TransactionType, restriction_additions_count)
+		buffer = buffer[ArrayHelpers.size(restriction_additions):]
+		restriction_deletions = ArrayHelpers.read_array_count(buffer, TransactionType, restriction_deletions_count)
+		buffer = buffer[ArrayHelpers.size(restriction_deletions):]
+
+		instance = AccountDeactivateTransactionV1()
+		instance._signature = signature
+		instance._signer_public_key = signer_public_key
+		instance._version = version
+		instance._network = network
+		instance._type_ = type_
+		instance._fee = fee
+		instance._deadline = deadline
+		instance._restriction_flags = restriction_flags
+		instance._restriction_additions = restriction_additions
+		instance._restriction_deletions = restriction_deletions
+		return instance
+
+	def serialize(self) -> bytes:
+		buffer = bytes()
+		buffer += self.size.to_bytes(4, byteorder='little', signed=False)
+		buffer += self._verifiable_entity_header_reserved_1.to_bytes(4, byteorder='little', signed=False)
+		buffer += self._signature.serialize()
+		buffer += self._signer_public_key.serialize()
+		buffer += self._entity_body_reserved_1.to_bytes(4, byteorder='little', signed=False)
+		buffer += self._version.to_bytes(1, byteorder='little', signed=False)
+		buffer += self._network.serialize()
+		buffer += self._type_.serialize()
+		buffer += self._fee.serialize()
+		buffer += self._deadline.serialize()
+		buffer += self._restriction_flags.serialize()
+		buffer += len(self._restriction_additions).to_bytes(1, byteorder='little', signed=False)  # restriction_additions_count
+		buffer += len(self._restriction_deletions).to_bytes(1, byteorder='little', signed=False)  # restriction_deletions_count
+		buffer += self._account_restriction_transaction_body_reserved_1.to_bytes(4, byteorder='little', signed=False)
+		buffer += ArrayHelpers.write_array(self._restriction_additions)
+		buffer += ArrayHelpers.write_array(self._restriction_deletions)
+		return buffer
+
+	def __str__(self) -> str:
+		result = '('
+		result += f'signature: {self._signature.__str__()}, '
+		result += f'signer_public_key: {self._signer_public_key.__str__()}, '
+		result += f'version: 0x{self._version:X}, '
+		result += f'network: {self._network.__str__()}, '
+		result += f'type_: {self._type_.__str__()}, '
+		result += f'fee: {self._fee.__str__()}, '
+		result += f'deadline: {self._deadline.__str__()}, '
+		result += f'restriction_flags: {self._restriction_flags.__str__()}, '
+		result += f'restriction_additions: {list(map(str, self._restriction_additions))}, '
+		result += f'restriction_deletions: {list(map(str, self._restriction_deletions))}, '
+		result += ')'
+		return result
+
+
+class EmbeddedAccountDeactivateTransactionV1:
+	TRANSACTION_VERSION: int = 1
+	TRANSACTION_TYPE: TransactionType = TransactionType.ACCOUNT_DEACTIVATE
+	TYPE_HINTS = {
+		'signer_public_key': 'pod:PublicKey',
+		'network': 'enum:NetworkType',
+		'type_': 'enum:TransactionType',
+		'restriction_flags': 'enum:AccountRestrictionFlags',
+		'restriction_additions': 'array[TransactionType]',
+		'restriction_deletions': 'array[TransactionType]'
+	}
+
+	def __init__(self):
+		self._signer_public_key = PublicKey()
+		self._version = EmbeddedAccountDeactivateTransactionV1.TRANSACTION_VERSION
+		self._network = NetworkType.MAINNET
+		self._type_ = EmbeddedAccountDeactivateTransactionV1.TRANSACTION_TYPE
+		self._restriction_flags = AccountRestrictionFlags.ADDRESS
+		self._restriction_additions = []
+		self._restriction_deletions = []
+		self._embedded_transaction_header_reserved_1 = 0  # reserved field
+		self._entity_body_reserved_1 = 0  # reserved field
+		self._account_restriction_transaction_body_reserved_1 = 0  # reserved field
+
+	def sort(self) -> None:
+		pass
+
+	@property
+	def signer_public_key(self) -> PublicKey:
+		return self._signer_public_key
+
+	@property
+	def version(self) -> int:
+		return self._version
+
+	@property
+	def network(self) -> NetworkType:
+		return self._network
+
+	@property
+	def type_(self) -> TransactionType:
+		return self._type_
+
+	@property
+	def restriction_flags(self) -> AccountRestrictionFlags:
+		return self._restriction_flags
+
+	@property
+	def restriction_additions(self) -> List[TransactionType]:
+		return self._restriction_additions
+
+	@property
+	def restriction_deletions(self) -> List[TransactionType]:
+		return self._restriction_deletions
+
+	@signer_public_key.setter
+	def signer_public_key(self, value: PublicKey):
+		self._signer_public_key = value
+
+	@version.setter
+	def version(self, value: int):
+		self._version = value
+
+	@network.setter
+	def network(self, value: NetworkType):
+		self._network = value
+
+	@type_.setter
+	def type_(self, value: TransactionType):
+		self._type_ = value
+
+	@restriction_flags.setter
+	def restriction_flags(self, value: AccountRestrictionFlags):
+		self._restriction_flags = value
+
+	@restriction_additions.setter
+	def restriction_additions(self, value: List[TransactionType]):
+		self._restriction_additions = value
+
+	@restriction_deletions.setter
+	def restriction_deletions(self, value: List[TransactionType]):
+		self._restriction_deletions = value
+
+	@property
+	def size(self) -> int:
+		size = 0
+		size += 4
+		size += 4
+		size += self.signer_public_key.size
+		size += 4
+		size += 1
+		size += self.network.size
+		size += self.type_.size
+		size += self.restriction_flags.size
+		size += 1
+		size += 1
+		size += 4
+		size += ArrayHelpers.size(self.restriction_additions)
+		size += ArrayHelpers.size(self.restriction_deletions)
+		return size
+
+	@classmethod
+	def deserialize(cls, payload: ByteString) -> EmbeddedAccountDeactivateTransactionV1:
+		buffer = memoryview(payload)
+		size_ = int.from_bytes(buffer[:4], byteorder='little', signed=False)
+		buffer = buffer[4:]
+		buffer = buffer[:size_ - 4]
+		del size_
+		embedded_transaction_header_reserved_1 = int.from_bytes(buffer[:4], byteorder='little', signed=False)
+		buffer = buffer[4:]
+		assert embedded_transaction_header_reserved_1 == 0, f'Invalid value of reserved field ({embedded_transaction_header_reserved_1})'
+		signer_public_key = PublicKey.deserialize(buffer)
+		buffer = buffer[signer_public_key.size:]
+		entity_body_reserved_1 = int.from_bytes(buffer[:4], byteorder='little', signed=False)
+		buffer = buffer[4:]
+		assert entity_body_reserved_1 == 0, f'Invalid value of reserved field ({entity_body_reserved_1})'
+		version = int.from_bytes(buffer[:1], byteorder='little', signed=False)
+		buffer = buffer[1:]
+		network = NetworkType.deserialize(buffer)
+		buffer = buffer[network.size:]
+		type_ = TransactionType.deserialize(buffer)
+		buffer = buffer[type_.size:]
+		restriction_flags = AccountRestrictionFlags.deserialize(buffer)
+		buffer = buffer[restriction_flags.size:]
+		restriction_additions_count = int.from_bytes(buffer[:1], byteorder='little', signed=False)
+		buffer = buffer[1:]
+		restriction_deletions_count = int.from_bytes(buffer[:1], byteorder='little', signed=False)
+		buffer = buffer[1:]
+		account_restriction_transaction_body_reserved_1 = int.from_bytes(buffer[:4], byteorder='little', signed=False)
+		buffer = buffer[4:]
+		assert account_restriction_transaction_body_reserved_1 == 0, f'Invalid value of reserved field ({account_restriction_transaction_body_reserved_1})'
+		restriction_additions = ArrayHelpers.read_array_count(buffer, TransactionType, restriction_additions_count)
+		buffer = buffer[ArrayHelpers.size(restriction_additions):]
+		restriction_deletions = ArrayHelpers.read_array_count(buffer, TransactionType, restriction_deletions_count)
+		buffer = buffer[ArrayHelpers.size(restriction_deletions):]
+
+		instance = EmbeddedAccountDeactivateTransactionV1()
 		instance._signer_public_key = signer_public_key
 		instance._version = version
 		instance._network = network
@@ -14852,6 +15254,7 @@ class TransactionFactory:
 			(AccountAddressRestrictionTransactionV1.TRANSACTION_TYPE, AccountAddressRestrictionTransactionV1.TRANSACTION_VERSION): AccountAddressRestrictionTransactionV1,
 			(AccountMosaicRestrictionTransactionV1.TRANSACTION_TYPE, AccountMosaicRestrictionTransactionV1.TRANSACTION_VERSION): AccountMosaicRestrictionTransactionV1,
 			(AccountOperationRestrictionTransactionV1.TRANSACTION_TYPE, AccountOperationRestrictionTransactionV1.TRANSACTION_VERSION): AccountOperationRestrictionTransactionV1,
+			(AccountDeactivateTransactionV1.TRANSACTION_TYPE, AccountDeactivateTransactionV1.TRANSACTION_VERSION): AccountDeactivateTransactionV1,
 			(MosaicAddressRestrictionTransactionV1.TRANSACTION_TYPE, MosaicAddressRestrictionTransactionV1.TRANSACTION_VERSION): MosaicAddressRestrictionTransactionV1,
 			(MosaicGlobalRestrictionTransactionV1.TRANSACTION_TYPE, MosaicGlobalRestrictionTransactionV1.TRANSACTION_VERSION): MosaicGlobalRestrictionTransactionV1,
 			(TransferTransactionV1.TRANSACTION_TYPE, TransferTransactionV1.TRANSACTION_VERSION): TransferTransactionV1
@@ -14887,6 +15290,7 @@ class TransactionFactory:
 			'account_address_restriction_transaction_v1': AccountAddressRestrictionTransactionV1,
 			'account_mosaic_restriction_transaction_v1': AccountMosaicRestrictionTransactionV1,
 			'account_operation_restriction_transaction_v1': AccountOperationRestrictionTransactionV1,
+			'account_deactivate_transaction_v1': AccountDeactivateTransactionV1,
 			'mosaic_address_restriction_transaction_v1': MosaicAddressRestrictionTransactionV1,
 			'mosaic_global_restriction_transaction_v1': MosaicGlobalRestrictionTransactionV1,
 			'transfer_transaction_v1': TransferTransactionV1
@@ -14924,6 +15328,7 @@ class EmbeddedTransactionFactory:
 			(EmbeddedAccountAddressRestrictionTransactionV1.TRANSACTION_TYPE, EmbeddedAccountAddressRestrictionTransactionV1.TRANSACTION_VERSION): EmbeddedAccountAddressRestrictionTransactionV1,
 			(EmbeddedAccountMosaicRestrictionTransactionV1.TRANSACTION_TYPE, EmbeddedAccountMosaicRestrictionTransactionV1.TRANSACTION_VERSION): EmbeddedAccountMosaicRestrictionTransactionV1,
 			(EmbeddedAccountOperationRestrictionTransactionV1.TRANSACTION_TYPE, EmbeddedAccountOperationRestrictionTransactionV1.TRANSACTION_VERSION): EmbeddedAccountOperationRestrictionTransactionV1,
+			(EmbeddedAccountDeactivateTransactionV1.TRANSACTION_TYPE, EmbeddedAccountDeactivateTransactionV1.TRANSACTION_VERSION): EmbeddedAccountDeactivateTransactionV1,
 			(EmbeddedMosaicAddressRestrictionTransactionV1.TRANSACTION_TYPE, EmbeddedMosaicAddressRestrictionTransactionV1.TRANSACTION_VERSION): EmbeddedMosaicAddressRestrictionTransactionV1,
 			(EmbeddedMosaicGlobalRestrictionTransactionV1.TRANSACTION_TYPE, EmbeddedMosaicGlobalRestrictionTransactionV1.TRANSACTION_VERSION): EmbeddedMosaicGlobalRestrictionTransactionV1,
 			(EmbeddedTransferTransactionV1.TRANSACTION_TYPE, EmbeddedTransferTransactionV1.TRANSACTION_VERSION): EmbeddedTransferTransactionV1
@@ -14955,6 +15360,7 @@ class EmbeddedTransactionFactory:
 			'account_address_restriction_transaction_v1': EmbeddedAccountAddressRestrictionTransactionV1,
 			'account_mosaic_restriction_transaction_v1': EmbeddedAccountMosaicRestrictionTransactionV1,
 			'account_operation_restriction_transaction_v1': EmbeddedAccountOperationRestrictionTransactionV1,
+			'account_deactivate_transaction_v1': EmbeddedAccountDeactivateTransactionV1,
 			'mosaic_address_restriction_transaction_v1': EmbeddedMosaicAddressRestrictionTransactionV1,
 			'mosaic_global_restriction_transaction_v1': EmbeddedMosaicGlobalRestrictionTransactionV1,
 			'transfer_transaction_v1': EmbeddedTransferTransactionV1
