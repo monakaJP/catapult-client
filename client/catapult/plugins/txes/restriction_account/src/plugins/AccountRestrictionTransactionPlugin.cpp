@@ -23,7 +23,7 @@
 #include "src/model/AccountAddressRestrictionTransaction.h"
 #include "src/model/AccountMosaicRestrictionTransaction.h"
 #include "src/model/AccountOperationRestrictionTransaction.h"
-#include "src/model/AccountDeactivateRestrictionTransaction.h"
+#include "src/model/AccountDeactivationRestrictionTransaction.h"
 #include "src/model/AccountRestrictionNotifications.h"
 #include "catapult/model/NotificationSubscriber.h"
 #include "catapult/model/TransactionPluginFactory.h"
@@ -112,5 +112,5 @@ namespace catapult { namespace plugins {
 	DEFINE_TRANSACTION_PLUGIN_FACTORY(AccountAddressRestriction, Default, Publisher<AddressTraits>::Publish)
 	DEFINE_TRANSACTION_PLUGIN_FACTORY(AccountMosaicRestriction, Default, Publisher<MosaicTraits>::Publish)
 	DEFINE_TRANSACTION_PLUGIN_FACTORY(AccountOperationRestriction, Default, Publisher<OperationTraits>::Publish)
-	DEFINE_TRANSACTION_PLUGIN_FACTORY(AccountDeactivateRestriction, Default, Publisher<OperationTraits>::Publish)
+	DEFINE_TRANSACTION_PLUGIN_FACTORY(AccountDeactivationRestriction, Default, Publisher<OperationTraits>::Publish)
 }}

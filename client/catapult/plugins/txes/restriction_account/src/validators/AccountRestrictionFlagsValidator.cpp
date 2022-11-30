@@ -40,7 +40,7 @@ namespace catapult { namespace validators {
 			case model::AccountRestrictionFlags::TransactionType:
 				return HasFlag(model::AccountRestrictionFlags::Outgoing, directionalRestrictionFlags);
 
-			case model::AccountRestrictionFlags::Deactivate:
+			case model::AccountRestrictionFlags::Deactivation:
 				return true;
 
 			default:

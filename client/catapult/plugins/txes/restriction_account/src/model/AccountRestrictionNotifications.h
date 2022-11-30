@@ -54,8 +54,8 @@ namespace catapult { namespace model {
 	/// Account operation restriction modifications.
 	DEFINE_ACCOUNT_RESTRICTION_NOTIFICATION(Operation_Modifications, 0x0007, Validator);
 
-	/// Account deactivate operations.
-	DEFINE_ACCOUNT_RESTRICTION_NOTIFICATION(Deactivate_Modification, 0x0008, All);
+	/// Account Deactivation operations.
+	DEFINE_ACCOUNT_RESTRICTION_NOTIFICATION(Deactivation_Modification, 0x0008, All);
 
 #undef DEFINE_ACCOUNT_RESTRICTION_NOTIFICATION
 
@@ -138,8 +138,8 @@ namespace catapult { namespace model {
 	using ModifyAccountOperationRestrictionValueNotification =
 		ModifyAccountRestrictionValueNotification<EntityType, RestrictionAccount_Operation_Modification_Notification>;
 
-	// using ModifyAccountDeactivateRestrictionValueNotification =
-	// 	ModifyAccountRestrictionValueNotification<EntityType, RestrictionAccount_Deactivate_Modification_Notification>;
+	// using ModifyAccountDeactivationRestrictionValueNotification =
+	// 	ModifyAccountRestrictionValueNotification<EntityType, RestrictionAccount_Deactivation_Modification_Notification>;
 
 	// endregion
 
@@ -200,9 +200,9 @@ namespace catapult { namespace model {
 	using ModifyAccountOperationRestrictionsNotification = ModifyAccountRestrictionsNotification<
 		EntityType,
 		RestrictionAccount_Operation_Modifications_Notification>;
-	// using ModifyAccountDeactivateRestrictionsNotification = ModifyAccountRestrictionsNotification<
+	// using ModifyAccountDeactivationRestrictionsNotification = ModifyAccountRestrictionsNotification<
 	// 	EntityType,
-	// 	RestrictionAccount_Deactivate_Modifications_Notification>;
+	// 	RestrictionAccount_Deactivation_Modifications_Notification>;
 
 
 	// endregion

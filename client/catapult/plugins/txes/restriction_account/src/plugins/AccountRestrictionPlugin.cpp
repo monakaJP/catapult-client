@@ -35,7 +35,7 @@ namespace catapult { namespace plugins {
 		manager.addTransactionSupport(CreateAccountAddressRestrictionTransactionPlugin());
 		manager.addTransactionSupport(CreateAccountMosaicRestrictionTransactionPlugin());
 		manager.addTransactionSupport(CreateAccountOperationRestrictionTransactionPlugin());
-		manager.addTransactionSupport(CreateAccountDeactivateRestrictionTransactionPlugin());
+		manager.addTransactionSupport(CreateAccountDeactivationRestrictionTransactionPlugin());
 
 		auto networkIdentifier = manager.config().Network.Identifier;
 		manager.addCacheSupport<cache::AccountRestrictionCacheStorage>(std::make_unique<cache::AccountRestrictionCache>(
@@ -57,7 +57,7 @@ namespace catapult { namespace plugins {
 
 				.add(validators::CreateAccountOperationRestrictionModificationValuesValidator());
 
-				// .add(validators::CreateAccountDeactivateFlagsValidator());
+				// .add(validators::CreateAccountDeactivationFlagsValidator());
 		});
 
 		auto config = model::LoadPluginConfiguration<config::AccountRestrictionConfiguration>(
@@ -81,7 +81,7 @@ namespace catapult { namespace plugins {
 				.add(validators::CreateMaxAccountOperationRestrictionValuesValidator(maxAccountRestrictionValues))
 				.add(validators::CreateOperationRestrictionValidator())
 				.add(validators::CreateAccountOperationRestrictionNoSelfBlockingValidator())
-				.add(validators::CreateAccountDeactivateValidator());
+				.add(validators::CreateAccountDeactivationValidator());
 		});
 
 		manager.addObserverHook([](auto& builder) {
@@ -89,7 +89,7 @@ namespace catapult { namespace plugins {
 				.add(observers::CreateAccountAddressRestrictionValueModificationObserver())
 				.add(observers::CreateAccountMosaicRestrictionValueModificationObserver())
 				.add(observers::CreateAccountOperationRestrictionValueModificationObserver());
-				// .add(observers::CreateAccountDeactivateRestrictionValueModificationObserver());
+				// .add(observers::CreateAccountDeactivationRestrictionValueModificationObserver());
 		});
 	}
 }}

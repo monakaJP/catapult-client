@@ -37,7 +37,7 @@ namespace catapult { namespace model {
 	DEFINE_TRANSACTION_TYPE(RestrictionAccount, Account_Operation_Restriction, 0x3);
 
 	/// Operation account restriction transaction.
-	DEFINE_TRANSACTION_TYPE(RestrictionAccount, Account_Deactivate_Restriction, 0x4);
+	DEFINE_TRANSACTION_TYPE(RestrictionAccount, Account_Deactivation_Restriction, 0x4);
 
 #ifndef CUSTOM_ENTITY_TYPE_DEFINITION
 }}

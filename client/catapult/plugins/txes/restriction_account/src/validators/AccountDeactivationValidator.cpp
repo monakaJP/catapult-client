@@ -29,29 +29,13 @@ namespace catapult { namespace validators {
 
 	using Notification = model::TransactionNotification;
 
-	// auto strippedRestrictionFlags = state::AccountRestrictionDescriptor(restrictionFlags).restrictionFlags();
-	DEFINE_STATEFUL_VALIDATOR(AccountDeactivate, [](const Notification& notification,const ValidatorContext& context) {
-		constexpr auto Restriction_Flags = model::AccountRestrictionFlags::Deactivate;
-		// auto strippedRestrictionFlags = state::AccountRestrictionDescriptor(Restriction_Flags).restrictionFlags();
+	DEFINE_STATEFUL_VALIDATOR(AccountDeactivation, [](const Notification& notification,const ValidatorContext& context) {
+		constexpr auto Restriction_Flags = model::AccountRestrictionFlags::Deactivation;
 		AccountRestrictionView view(context.Cache);
-		CATAPULT_LOG(info) << "Deactivate validation....";
-		// const auto& address = notification.Sender;
-		// const auto& cache = context.Cache.sub<cache::AccountRestrictionCache>();
-		// if (!cache.contains(address))
-		// 	return ValidationResult::Success;
-
-		// auto restrictionsIter = cache.find(address);
-		// const auto& restrictions = restrictionsIter.get();
-		// auto restrictionFlags = notification.AccountRestrictionDescriptor.directionalRestrictionFlags();
-		// const auto& restriction = restrictions.restriction(Restriction_Flags);
-		// auto strippedRestrictionFlags = state::AccountRestrictionDescriptor(restrictionFlags).restrictionFlags();
+		CATAPULT_LOG(info) << "Deactivation validation....";
 		if (!view.initialize(notification.Sender))
 			return ValidationResult::Success;
-		// auto isTransferAllowed = view.isAllowed(Restriction_Flags, notification.TransactionType);
-		auto isDeactivated = HasFlag(model::AccountRestrictionFlags::Deactivate, view.get(Restriction_Flags).descriptor().raw());
-		// auto isDeactivated = restriction.contains(Restriction_Flags);
-		// auto isDeactivated = strippedRestrictionFlags == state::AccountRestrictions:Deactivate
-		// get sender flags
+		auto isDeactivated = HasFlag(model::AccountRestrictionFlags::Deactivation, view.get(Restriction_Flags).descriptor().raw());
 		if (!isDeactivated)
 			CATAPULT_LOG(info) << "validation success";
 		if (isDeactivated)

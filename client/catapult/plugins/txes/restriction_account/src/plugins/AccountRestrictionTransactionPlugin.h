@@ -41,5 +41,5 @@ namespace catapult { namespace plugins {
 
 		/// Creates an account operation restriction transaction plugin.
 	PLUGIN_API
-	std::unique_ptr<model::TransactionPlugin> CreateAccountDeactivateRestrictionTransactionPlugin();
+	std::unique_ptr<model::TransactionPlugin> CreateAccountDeactivationRestrictionTransactionPlugin();
 }}
