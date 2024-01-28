@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "axios": "^1.6.5",
+    "axios": "^1.6.7",
     "chai": "^5.0.3",
     "eslint": "^8.56.0",
     "eslint-config-airbnb": "^19.0.4",
