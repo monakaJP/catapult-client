@@ -23,7 +23,7 @@
     "mocha": "^10.7.3",
     "mocha-jenkins-reporter": "^0.4.8",
     "nyc": "^17.0.0",
-    "sinon": "^18.0.0",
+    "sinon": "^19.0.2",
     "tmp": "^0.2.3"
   },
   "dependencies": {
