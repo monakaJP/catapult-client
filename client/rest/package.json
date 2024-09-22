@@ -17,7 +17,7 @@
   "devDependencies": {
     "axios": "^1.7.7",
     "chai": "^5.1.1",
-    "eslint": "^9.9.1",
+    "eslint": "^9.11.0",
     "eslint-config-airbnb": "^19.0.4",
     "minimist": "^1.2.8",
     "mocha": "^10.7.3",
